@@ -1,0 +1,12 @@
+
+Pioneers (formerly Gno-Catan) scenarios and map generating tools
+
+Some existing resorces:
+  Random map generator: http://pio.sourceforge.net/contrib/random-gen.c
+  Map randomizer: http://pio.sourceforge.net/contrib/map-randomizer.c
+
+Though, I will probably re-implement those in Perl for fun.
+
+
+And, of course, the pioneers website has some other useful resources:
+  http://pio.sourceforge.net/contrib.html
