@@ -1,0 +1,84 @@
+Example:
+
+variant default# ???
+# VAR_DEFAULT, /* plain out-of-the-box game */
+# VAR_ISLANDS, /* Islands of Catan */
+# VAR_INTIMATE /* Intimate Catan */
+
+title Scenario 1: New Shores (III/IV)
+random-terrain
+domestic-trade
+num-players 4
+sevens-rule 1
+victory-points 10
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 0
+resource-count 30
+develop-road 2
+develop-monopoly 2
+develop-plenty 2
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 13
+use-pirate
+chits 9,2,2,2,2,2,2,2,2,2,2,2,2,10,2,2,2,2,2,2,2,8,3,4,5,11
+map
+g0+,s,s,h1,f2,p3,s
+s,s,t4,t5,m6,t7,s
+p8+,s,p9,p10,d11,h12,m13
+m14+,s,h15,h16,m17,f18,s
+s,s,s,f19,p20,t21,s
+s,s,s,s,s,s,s
+m22+,g23+,f24+,s,s,t25+,h26+
+.
+nosetup 4 6 5
+nosetup 5 2 4
+nosetup 4 2 4
+nosetup 4 2 5
+nosetup 5 6 4
+nosetup 4 6 4
+
+
+
+map details: TNX
+ T is type:
+   g - gold
+   s - sea
+   d - desert
+   p - pasture
+   m - mountain
+   f - farmland
+   h - hills
+   t - trees
+   - - table (none)
+ N
+   for land hexes: is chit number (deserts have a number, but are skipped in chit allocation)
+                   ** Chit placement is deterministic if deserts are fixed
+   for sea hexes: is port type
+     ? - 3:1 port
+     R - pirate
+     b - brick port
+     g - grain port
+     o - ore port
+     w - wool port
+     l - lumber port
+ X is extra modifier:
+   for land hexes:
+     + - do not shuffle (will not randomize land)
+   for sea hexes:
+     0-5: use 0 to put port pointing east (usable by the eastern hex), then proceed counter-clockwise
+
+Number allocation is always sequential
+
+
+nosetup X Y D
+   X, Y (from bottom), Direction
+   X,Y are 0-based
+   direction: 1 is north vertex and increase counter-clockwise
