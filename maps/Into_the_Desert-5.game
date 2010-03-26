@@ -1,0 +1,36 @@
+variant default
+title Into The Desert (V)
+random-terrain
+domestic-trade
+num-players 5
+sevens-rule 0
+victory-points 12
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 0
+resource-count 24
+develop-road 3
+develop-monopoly 3
+develop-plenty 3
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 19
+use-pirate
+chits 12,5,6,11,5,8,4,11,2,4,5,8,10,12,9,6,10,9,4,9,3,6,3,10,8,4,9,5,8,11,10,3,2
+map
+s,s,s,s,s,s,s,s,s,s,s
+s,p0,t1,m2,h3,s,m4,h5,t6,g7,s
+s,s,s,s,d8,d9,d10,d11,d12,s,s
+s,s,s?4,so5,f13,t14,f15,t16,s?2,s,s
+s,s?0,p17,h18,f19,h20,t21,m22,sl2,p23,s
+s,h24,f25,m26,p27,h28,p29,s,s,s,s
+s,s?0,m30,s?1,s,sb2,sw1,s,s,t31,s
+s,t32,sg2,m33,f34,s,g35,s,p36,f37,s
+s,s,s,s,s,s,s,s,s,s,s
+.
