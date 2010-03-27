@@ -3,7 +3,7 @@ title 5 - Into The Desert (V)
 random-terrain
 domestic-trade
 num-players 5
-sevens-rule 0
+sevens-rule 1
 victory-points 12
 num-roads 15
 num-bridges 0
