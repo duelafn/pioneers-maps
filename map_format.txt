@@ -1,33 +1,45 @@
-Example:
+## use sharp for comments in file?
 
-variant default# ???
-# VAR_DEFAULT, /* plain out-of-the-box game */
-# VAR_ISLANDS, /* Islands of Catan */
-# VAR_INTIMATE /* Intimate Catan */
+variant default   # enum < islands intimate default >  ... doesn't do anything?
 
+## common/game.c   for list of parameters
+#
 title Scenario 1: New Shores (III/IV)
-random-terrain
-domestic-trade
-num-players 4
-sevens-rule 1
-victory-points 10
-num-roads 15
-num-bridges 0
-num-ships 15
-num-settlements 5
-num-cities 4
-num-city-walls 0
-resource-count 30
-develop-road 2
-develop-monopoly 2
-develop-plenty 2
-develop-chapel 1
-develop-university 1
-develop-governor 1
-develop-library 1
-develop-market 1
-develop-soldier 13
-use-pirate
+
+island-discovery-bonus 1         // PARAM_INTLIST  (comma-separated; points awarded for nth discovery, may be negative?)
+num-players 4                    // PARAM_INT
+sevens-rule 1                    // PARAM_INT      (0: never reroll;  1: reroll first two turns;  2: always reroll)
+victory-points 10                // PARAM_INT
+
+check-victory-at-end-of-turn     // PARAM_BOOL
+domestic-trade                   // PARAM_BOOL
+random-terrain                   // PARAM_BOOL
+strict-trade                     // PARAM_BOOL
+use-pirate                       // PARAM_BOOL
+
+num-bridges 0                    // PARAM_INT
+num-cities 4                     // PARAM_INT
+num-city-walls 0                 // PARAM_INT
+num-roads 15                     // PARAM_INT
+num-settlements 5                // PARAM_INT
+num-ships 15                     // PARAM_INT
+
+resource-count 30                // PARAM_INT
+
+develop-chapel 1                 // PARAM_INT
+develop-governor 1               // PARAM_INT
+develop-library 1                // PARAM_INT
+develop-market 1                 // PARAM_INT
+develop-monopoly 2               // PARAM_INT
+develop-plenty 2                 // PARAM_INT
+develop-road 2                   // PARAM_INT
+develop-soldier 13               // PARAM_INT
+develop-university 1             // PARAM_INT
+
+
+
+
+
 chits 9,2,2,2,2,2,2,2,2,2,2,2,2,10,2,2,2,2,2,2,2,8,3,4,5,11
 map
 g0+,s,s,h1,f2,p3,s
@@ -79,6 +91,6 @@ Number allocation is always sequential
 
 
 nosetup X Y D
-   X, Y (from bottom), Direction
-   X,Y are 0-based
+   X, Y, Direction
+   X,Y are 0-based from top left; Count down Y first
    direction: 1 is north vertex and increase counter-clockwise
