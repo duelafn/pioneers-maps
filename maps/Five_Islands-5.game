@@ -1,5 +1,6 @@
 variant default
 title 5 - The Five Islands (V)
+island-discovery-bonus 1
 random-terrain
 domestic-trade
 num-players 5
