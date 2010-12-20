@@ -1,0 +1,78 @@
+variant default
+title 3|4 - New Shores (III/IV)
+island-discovery-bonus 1
+check-victory-at-end-of-turn
+random-terrain
+domestic-trade
+num-players 4
+sevens-rule 1
+victory-points 14
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 0
+resource-count 19
+develop-road 2
+develop-monopoly 2
+develop-plenty 2
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 13
+use-pirate
+chits 11,5,4,3,8,11,12,9,4,6,5,10,10,3,11,4,8,2,8,10,9,3,5,2,6,9
+map
+-,s,s,s,s,s,s,s,s
+s,h0,t1,s,s,f2,g3+,m4,s
+-,s,sw5,s,s?4,s,s,s,s
+s,s,t5,p6,f7,sg4,s,s,s
+-,s?0,h8,m9,h10,p11,s,m12,s
+s,d13+,t14,f15,t16,f17,sl3,p18,s
+-,s?0,h19,p20,p21,m22,s,s,s
+s,s,m23,f24,t25,s?2,s,g26+,s
+-,s,so1,s,sb2,s,s,s,s
+.
+nosetup 0 1 0
+nosetup 0 1 5
+nosetup 1 0 5
+nosetup 1 1 0
+nosetup 1 1 4
+nosetup 1 1 5
+nosetup 2 0 5
+nosetup 2 1 0
+nosetup 2 1 4
+nosetup 2 1 5
+nosetup 4 1 0
+nosetup 4 1 5
+nosetup 5 0 5
+nosetup 5 1 0
+nosetup 5 1 4
+nosetup 5 1 5
+nosetup 6 0 5
+nosetup 6 1 0
+nosetup 6 1 4
+nosetup 6 1 5
+nosetup 6 3 4
+nosetup 6 3 5
+nosetup 6 4 5
+nosetup 6 5 0
+nosetup 6 5 5
+nosetup 6 7 0
+nosetup 6 7 5
+nosetup 7 0 5
+nosetup 7 1 0
+nosetup 7 1 4
+nosetup 7 1 5
+nosetup 7 3 4
+nosetup 7 4 5
+nosetup 7 5 0
+nosetup 7 5 4
+nosetup 7 5 5
+nosetup 7 6 5
+nosetup 7 7 0
+nosetup 7 7 4
+nosetup 7 7 5
