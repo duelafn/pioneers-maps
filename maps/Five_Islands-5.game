@@ -11,7 +11,7 @@ num-bridges 0
 num-ships 15
 num-settlements 5
 num-cities 4
-num-city-walls 0
+num-city-walls 3
 resource-count 24
 develop-road 3
 develop-monopoly 3
