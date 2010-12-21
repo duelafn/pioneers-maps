@@ -1,0 +1,73 @@
+variant islands
+title 3 - Oceans (III)
+check-victory-at-end-of-turn
+random-terrain
+domestic-trade
+num-players 4
+sevens-rule 1
+victory-points 12
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 0
+resource-count 19
+develop-road 2
+develop-monopoly 2
+develop-plenty 2
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 14
+use-pirate
+chits 3,6,4,10,9,5,6,2,9,10,8,11,11,5,12,3,4,8
+map
+-,s,s?5,s,sl4,s,s?4
+s,m0,f1,h2,h3,p4,s
+-,s?1,s,t5,p6,t7,sb2
+s,p8,so1,s,m9,t10,s
+-,s,m11,s,sw0,f12,s
+s,m13,s,f14,s,sg2,s
+-,s,s,s,f15,s,s
+s,g16+,s,s,s,h17,s
+-,s,s,s,s,s,s
+.
+nosetup 0 3 0
+nosetup 0 3 5
+nosetup 0 5 0
+nosetup 0 5 5
+nosetup 0 7 0
+nosetup 0 7 5
+nosetup 1 2 5
+nosetup 1 3 0
+nosetup 1 3 4
+nosetup 1 3 5
+nosetup 1 4 5
+nosetup 1 5 0
+nosetup 1 5 4
+nosetup 1 5 5
+nosetup 1 6 5
+nosetup 1 7 0
+nosetup 1 7 4
+nosetup 1 7 5
+nosetup 2 3 4
+nosetup 2 4 5
+nosetup 2 5 0
+nosetup 2 5 5
+nosetup 3 4 5
+nosetup 3 5 0
+nosetup 3 5 4
+nosetup 3 5 5
+nosetup 3 6 5
+nosetup 3 7 0
+nosetup 4 5 4
+nosetup 4 6 5
+nosetup 4 7 0
+nosetup 4 7 5
+nosetup 5 6 5
+nosetup 5 7 0
+nosetup 5 7 4
+nosetup 5 7 5

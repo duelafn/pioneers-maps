@@ -1,0 +1,38 @@
+variant islands
+title 3 - The Four Islands (III)
+island-discovery-bonus 1,2
+check-victory-at-end-of-turn
+random-terrain
+domestic-trade
+num-players 3
+sevens-rule 1
+victory-points 12
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 0
+resource-count 19
+develop-road 2
+develop-monopoly 2
+develop-plenty 2
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 14
+use-pirate
+chits 10,12,4,8,9,8,11,5,2,10,9,9,3,6,4
+map
+-,s?5,s,s,s,sb5,s
+s,p0,s,sl5,f1,m2,s
+-,s,m3,s,h4,p5,s
+s,s,s,s,t6,h7,s
+-,s,s?5,s,so1,s,s
+s,m8,h9,s,s,s,s
+-,sw1,t10,s,s,f11,s
+s,f12,s,s,t13,p14,s
+-,s?1,s,s,s,sg2,s
+.
