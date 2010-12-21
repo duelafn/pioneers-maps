@@ -26,13 +26,92 @@ develop-soldier 19
 use-pirate
 chits 5,11,6,3,8,10,9,3,11,12,6,11,12,9,2,4,6,5,10,5,11,3,4,8,4,4,8,10,9,3,9,10,5,2,6,8
 map
-s,s,s,s,s,s,s,s,s,s,s
+-,s,s,s,s,s,s,s,s,s,s
 s,t0,p1,s,h2,h3,s,m4,t5,f6,s
-s,s,p7,s,s,s?5,s,so4,p8,f9,s
+-,s,p7,s,s,s?5,s,so4,p8,f9,s
 s,h10,s,s?0,t11,p12,f13,s,s?2,t14,s
-s,s,s,s,h15,m16,h17,p18,s?3,s,s
-s,f19,sl0,f20,t21,d22,t23,f24,s,m25,s
-s,s,f26,s,h27,p28,p29,m30,sg2,s,s
+-,s,s,s,h15,m16,h17,p18,s?3,s,s
+s,f19,sl0,f20,t21,d22+,t23,f24,s,m25,s
+-,s,f26,s,h27,p28,p29,m30,sg2,s,s
 s,p31,t32,sw1,m33,f34,t35,s,s,m36,s
-s,s,s,s,s,sb1,s,s?2,s,s,s
+-,s,s,s,s,sb1,s,s?2,s,s,s
 .
+nosetup 0 1 0
+nosetup 0 1 5
+nosetup 0 3 0
+nosetup 0 3 5
+nosetup 0 5 0
+nosetup 0 5 5
+nosetup 0 7 0
+nosetup 0 7 5
+nosetup 1 0 5
+nosetup 1 1 0
+nosetup 1 1 4
+nosetup 1 1 5
+nosetup 1 2 5
+nosetup 1 3 0
+nosetup 1 3 4
+nosetup 1 3 5
+nosetup 1 4 5
+nosetup 1 5 0
+nosetup 1 5 4
+nosetup 1 5 5
+nosetup 1 6 5
+nosetup 1 7 0
+nosetup 1 7 4
+nosetup 1 7 5
+nosetup 2 0 5
+nosetup 2 1 0
+nosetup 2 1 4
+nosetup 2 1 5
+nosetup 2 2 5
+nosetup 2 5 4
+nosetup 2 6 5
+nosetup 2 7 0
+nosetup 2 7 4
+nosetup 2 7 5
+nosetup 3 1 0
+nosetup 3 1 5
+nosetup 4 0 5
+nosetup 4 1 0
+nosetup 4 1 4
+nosetup 4 1 5
+nosetup 5 0 5
+nosetup 5 1 0
+nosetup 5 1 4
+nosetup 5 1 5
+nosetup 6 1 0
+nosetup 6 1 5
+nosetup 7 0 5
+nosetup 7 1 0
+nosetup 7 1 4
+nosetup 7 1 5
+nosetup 7 2 5
+nosetup 7 3 0
+nosetup 8 0 5
+nosetup 8 1 0
+nosetup 8 1 4
+nosetup 8 1 5
+nosetup 8 2 5
+nosetup 8 3 0
+nosetup 8 3 5
+nosetup 8 5 0
+nosetup 8 5 5
+nosetup 8 7 0
+nosetup 8 7 5
+nosetup 9 0 5
+nosetup 9 1 0
+nosetup 9 1 4
+nosetup 9 1 5
+nosetup 9 2 5
+nosetup 9 3 0
+nosetup 9 3 4
+nosetup 9 3 5
+nosetup 9 4 5
+nosetup 9 5 0
+nosetup 9 5 4
+nosetup 9 5 5
+nosetup 9 6 5
+nosetup 9 7 0
+nosetup 9 7 4
+nosetup 9 7 5
