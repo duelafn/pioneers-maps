@@ -1,5 +1,7 @@
 variant default
 title 4 - Greater Catan (IV)
+island-discovery-bonus 1
+check-victory-at-end-of-turn
 random-terrain
 domestic-trade
 num-players 4
@@ -10,7 +12,7 @@ num-bridges 0
 num-ships 15
 num-settlements 5
 num-cities 8
-num-city-walls 0
+num-city-walls 1
 resource-count 24
 develop-road 3
 develop-monopoly 3
