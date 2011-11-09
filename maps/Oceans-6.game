@@ -1,0 +1,37 @@
+variant islands
+title 6 - Oceans (VI)
+random-terrain
+domestic-trade
+check-victory-at-end-of-turn
+num-players 6
+sevens-rule 1
+victory-points 12
+num-roads 15
+num-bridges 0
+num-ships 15
+num-settlements 5
+num-cities 4
+num-city-walls 3
+resource-count 24
+develop-road 3
+develop-monopoly 3
+develop-plenty 3
+develop-chapel 1
+develop-university 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-soldier 20
+use-pirate
+chits 3,9,6,9,4,12,5,5,8,11,10,4,10,10,5,6,3,6,2,4,5,9,9,8,10,11,6,12,11,8,3,4,6,5
+map
+-,s,s,s,s,s,s,s,s,s,s,-
+s,g0+,p1,s,s,m2,s,s,s,g3+,s,-
+-,s,f4,p5,s,s,s,s,t6,s,s,-
+s,s,s,t7,s?5,p8,s?4,p9,f10,p11,s,-
+-,s,t12,s,s,p13,t14,s,s,s,s,-
+s,m15,s,so0,t16,m17,f18,s?4,s,s,s,-
+-,s,sl0,t19,f20,p21,m22,t23,f24,s?5,s,-
+s,m25,f26,h27,h28,h29,m30,p31,p32,h33,s,-
+-,s,s,sg1,s,s?2,s,sb2,s,sw1,s,-
+.

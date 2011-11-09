@@ -1,4 +1,4 @@
-variant default
+variant islands
 title 3|4 - New Shores (III/IV)
 island-discovery-bonus 1
 check-victory-at-end-of-turn

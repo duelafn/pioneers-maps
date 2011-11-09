@@ -3,7 +3,7 @@ title 3 - Oceans (III)
 check-victory-at-end-of-turn
 random-terrain
 domestic-trade
-num-players 4
+num-players 3
 sevens-rule 1
 victory-points 12
 num-roads 15

@@ -1,7 +1,8 @@
-variant default
+variant islands
 title 6 - Into The Desert (VI)
 random-terrain
 domestic-trade
+check-victory-at-end-of-turn
 num-players 6
 sevens-rule 1
 victory-points 12

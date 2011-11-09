@@ -1,5 +1,5 @@
 variant islands
-title 5 - Into The Desert (V)
+title 5 - Oceans (V)
 random-terrain
 domestic-trade
 check-victory-at-end-of-turn
@@ -21,17 +21,17 @@ develop-university 1
 develop-governor 1
 develop-library 1
 develop-market 1
-develop-soldier 19
+develop-soldier 20
 use-pirate
-chits 12,5,6,11,5,8,4,11,2,4,5,8,10,12,9,6,10,9,4,9,3,6,3,10,8,4,9,5,8,11,10,3,2
+chits 4,10,9,5,11,8,5,11,4,9,10,10,3,5,8,10,5,3,6,2,6,4,9,6,5,12,11,8,3,4,9
 map
 -,s,s,s,s,s,s,s,s,s,s
-s,p0,t1,m2,h3,s,m4,h5,t6,g7+,s
--,s,s,s,d8+,d9+,d10+,d11+,d12+,s,s
-s,s,s?4,so5,f13,t14,f15,t16,s?2,s,s
--,s?0,p17,h18,f19,h20,t21,m22,sl2,p23,s
-s,h24,f25,m26,p27,h28,p29,s,s,s,s
--,s?0,m30,s?1,s,sb2,sw1,s,s,t31,s
-s,t32,sg2,m33,f34,s,g35+,s,p36,f37,s
--,s,s,s,s,s,s,s,s,s,s
+s,g0+,s,s,sl5,s,h1,f2,s,g3+,s
+-,s,p4,t5,s?5,f6,s,s,m7,t8,s
+s,s,s,s,t9,p10,s?4,m11,p12,f13,s
+-,s,s,s,p14,f15,t16,s,s,s,s
+s,s,s,sg0,t17,m18,f19,sb4,s,s,s
+-,s,s,s,f20,p21,m22,t23,s,s,s
+s,h24,s,h25,h26,h27,m28,p29,s?332,t30,s
+-,s,s,s?1,s,sw2,s,so2,s,s,s
 .
