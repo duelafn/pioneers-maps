@@ -26,13 +26,13 @@ develop-soldier 20
 use-pirate
 chits 12,10,11,8,5,6,6,4,3,10,2,10,4,9,2,8,5,4,9,12,8,11,3,6,3,9,5
 map
--,s,sg5,s,s,s,s,s,s?5,s,s
-s,p0,m1,h2,s,s,t3,m4,p5,s,s
--,s,t6,m7,s,s,s,f8+,h9+,s,s
-s,t10,p11,sw2,s,so4,s,s?1,s,s,s
--,s,s,s,t12,f13,m14,s,s,s,s
-s,s,s,s,s,p15,s,t16,f17,s,s
--,sb0,t18,f19,s?4,s?1,s,h20,p21,sl3,s
-s,p22,m23,h24,s,s,s,h25,f26,s,s
--,s,s,s,s,s,s,s?1,s,s,s
+-,s,sg5,s,s,s,s,s,s?5,s
+s,p0,m1,h2,s,s,t3,m4,p5,s
+-,s,t6,m7,s,s,s,f8+,h9+,s
+s,t10,p11,sw2,s,so4,s,s?1,s,s
+-,s,s,s,t12,f13,m14,s,s,s
+s,s,s,s,s,p15,s,t16,f17,s
+-,sb0,t18,f19,s?4,s?1,s,h20,p21,sl3
+s,p22,m23,h24,s,s,s,h25,f26,s
+-,s,s,s,s,s,s,s?1,s,s
 .
