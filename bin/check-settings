@@ -1,0 +1,123 @@
+#!/usr/bin/perl -w
+use strict; use warnings; use 5.010;
+# This module is Copyright (c) 2013 Dean Serenevy. All rights reserved.
+#
+# You may distribute under the terms of either the GNU General Public License
+# or the Artistic License, as specified in the Perl README file.
+
+
+use Getopt::Long qw/:config bundling/;
+use Hash::Util qw/ lock_keys /;
+our $VERSION = '0.0000';# Created: 2013-02-09
+
+our %OPT = (  );
+our @OPT_SPEC = qw/ help|h version noact|no-act|dry-run DEBUG list_only|l list_good|L parse_only|p /;
+sub USAGE { <<"__USAGE__" };
+usage: $_[0] [options]
+
+OPTIONS
+
+ -p                  parse only - only display parser errors
+ -l                  list only  - list file names only, not individial errors
+ -L                  good only  - list files which pass all tests
+
+__USAGE__
+
+use lib 'lib';
+use Path::Class;
+use Pioneers::Config;
+
+get_options( \%OPT, @OPT_SPEC );
+MAIN(\%OPT, @ARGV);
+
+
+sub MAIN {
+    my ($opt, @files) = @_;
+    lint($_) for @files;
+}
+
+
+sub lint {
+    my $file = shift;
+    my $config = eval { Pioneers::Config->load($file) };
+    unless ($config) {
+        say "$file:";
+        say "  $@";
+        return;
+    }
+    return if $OPT{parse_only};
+    my @errors;
+
+    push @errors, "sevens-rule is not '1'"                      unless $config->sevens_rule and 1 == $config->sevens_rule;
+    push @errors, "check-victory-at-end-of-turn is not set"     unless $config->check_victory_at_end_of_turn;
+    push @errors, "random-terrain is not set"                   unless $config->random_terrain;
+    push @errors, "title does not follow '\\d - NAME' pattern"  unless $config->title =~ /^[\d|]+ \- /;
+    push @errors, "strict-trade is set"                         if $config->strict_trade;
+    push @errors, "domestic-trade is not set"                   unless $config->domestic_trade;
+
+    push @errors, "desert without '+'"                          if grep +($_ and $_->type eq 'd' and !$_->pin), $config->map->hexes;
+    push @errors, "gold mine without '+'"                       if grep +($_ and $_->type eq 'g' and !$_->pin), $config->map->hexes;
+
+    push @errors, "num-city-walls is zero, but num players ≥ 5" if $config->num_players >= 5 and !$config->num_city_walls;
+
+    if ($OPT{list_only} or $OPT{list_good}) {
+        say $file if @errors && $OPT{list_only} or !@errors && $OPT{list_good};
+        return
+    }
+
+    if (@errors) {
+        say "$file:";
+        say "  $_" for @errors;
+    }
+}
+
+
+sub get_options {
+    my $OPT = shift;
+    GetOptions $OPT, @_ or usage(1);
+    usage() if $$OPT{help} || $$OPT{version};
+    lock_keys(%$OPT, keys %$OPT, map /^(\w+)/, @_);
+}
+
+sub usage {
+    my $status = (@_ && $_[0] =~ /^\d+$/) ? shift(@_) : 0+@_;
+    print @_, "\n" if @_;
+    require File::Spec; my $exe = (File::Spec->splitpath($0))[2];
+    $OPT{$_} = $OPT{$_} ? "enabled" : "disabled" for map /^(\w+).*!/, @OPT_SPEC;
+    print $OPT{version} ? "$exe version $VERSION\n" : USAGE($exe);
+    exit $status;
+}
+
+
+
+=begin
+
+ * W: gold mine without nosetup
+
+ * Based on num-players
+   * resource-count   [ 19 in 2-4 player; 24 in 5-6 player ]
+   * development card ratios
+
+     |--------------------+-------------+------------------|
+     | setting            | nr in basic | nr in 5-6 player |
+     |--------------------+-------------+------------------|
+     | develop-soldier    |          14 |               20 |
+     | develop-monopoly   |           2 |                3 |
+     | develop-plenty     |           2 |                3 |
+     | develop-road       |           2 |                3 |
+     |--------------------+-------------+------------------|
+     | develop-chapel     |           1 |                1 |
+     | develop-governor   |           1 |                1 |
+     | develop-library    |           1 |                1 |
+     | develop-market     |           1 |                1 |
+     | develop-university |           1 |                1 |
+     |--------------------+-------------+------------------|
+
+ * Check for seafarers?
+   * victory-points ≥ 12
+   * island-discovery-bonus warning?
+   * use-pirate
+
+ * Estimate difficulty and time?
+
+=end
