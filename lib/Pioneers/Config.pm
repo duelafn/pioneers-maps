@@ -10,6 +10,9 @@ use Pioneers::Types;
 use Pioneers::Map;
 use Pioneers::Config::Parser;
 
+use MooseX::Types::Moose qw/ Str Bool ArrayRef /;
+use MooseX::Types::Common::Numeric qw/ PositiveInt PositiveOrZeroInt /;
+
 =pod
 
 =head1 NAME
@@ -28,42 +31,42 @@ Pioneers::Config - Pioneers Config File
 =cut
 
 our %parameters = (
-    'title'                        => { isa => "Str", required => 1 },
-    'variant'                      => { isa => "Str" }, # Not used
-    'desc'                         => { isa => "Str" },
+    'title'                        => { isa => Str, required => 1 },
+    'variant'                      => { isa => Str }, # Not used
+    'desc'                         => { isa => Str },
 
-    'num-players'                  => { isa => "Pioneers::Types::PosInt", required => 1 },
-    'victory-points'               => { isa => "Pioneers::Types::PosInt", required => 1 },
+    'num-players'                  => { isa => PositiveInt, required => 1 },
+    'victory-points'               => { isa => PositiveInt, required => 1 },
     'sevens-rule'                  => { isa => "Pioneers::Types::SevensRule", default => 1 },
-    'island-discovery-bonus'       => { isa => "ArrayRef[Pioneers::Types::NonNegInt]", parse_as => "ArrayOfNonNegInt" },
+    'island-discovery-bonus'       => { isa => ArrayRef[PositiveOrZeroInt], parse_as => "ArrayOfNonNegInt" },
 
-    'check-victory-at-end-of-turn' => { isa => "Bool", default => 1 },
-    'domestic-trade'               => { isa => "Bool", default => 1 },
-    'random-terrain'               => { isa => "Bool", default => 0 },
-    'use-pirate'                   => { isa => "Bool", default => 1 },
-    'strict-trade'                 => { isa => "Bool", default => 0 },
+    'check-victory-at-end-of-turn' => { isa => Bool, default => 1 },
+    'domestic-trade'               => { isa => Bool, default => 1 },
+    'random-terrain'               => { isa => Bool, default => 0 },
+    'use-pirate'                   => { isa => Bool, default => 1 },
+    'strict-trade'                 => { isa => Bool, default => 0 },
 
-    'num-bridges'                  => { isa => "Pioneers::Types::NonNegInt", default =>  3 },
-    'num-cities'                   => { isa => "Pioneers::Types::NonNegInt", default =>  4 },
-    'num-city-walls'               => { isa => "Pioneers::Types::NonNegInt", default =>  3 },
-    'num-roads'                    => { isa => "Pioneers::Types::NonNegInt", default => 15 },
-    'num-settlements'              => { isa => "Pioneers::Types::NonNegInt", default =>  5 },
-    'num-ships'                    => { isa => "Pioneers::Types::NonNegInt", default => 15 },
+    'num-bridges'                  => { isa => PositiveOrZeroInt, default =>  3 },
+    'num-cities'                   => { isa => PositiveOrZeroInt, default =>  4 },
+    'num-city-walls'               => { isa => PositiveOrZeroInt, default =>  3 },
+    'num-roads'                    => { isa => PositiveOrZeroInt, default => 15 },
+    'num-settlements'              => { isa => PositiveOrZeroInt, default =>  5 },
+    'num-ships'                    => { isa => PositiveOrZeroInt, default => 15 },
 
-    'resource-count'               => { isa => "Pioneers::Types::PosInt", default => 30 },
+    'resource-count'               => { isa => PositiveInt, default => 30 },
 
-    'develop-chapel'               => { isa => "Pioneers::Types::NonNegInt", default =>  1 },
-    'develop-governor'             => { isa => "Pioneers::Types::NonNegInt", default =>  1 },
-    'develop-library'              => { isa => "Pioneers::Types::NonNegInt", default =>  1 },
-    'develop-market'               => { isa => "Pioneers::Types::NonNegInt", default =>  1 },
-    'develop-university'           => { isa => "Pioneers::Types::NonNegInt", default =>  1 },
-    'develop-monopoly'             => { isa => "Pioneers::Types::NonNegInt", default =>  2 },
-    'develop-plenty'               => { isa => "Pioneers::Types::NonNegInt", default =>  2 },
-    'develop-road'                 => { isa => "Pioneers::Types::NonNegInt", default =>  2 },
-    'develop-soldier'              => { isa => "Pioneers::Types::NonNegInt", default => 13 },
+    'develop-chapel'               => { isa => PositiveOrZeroInt, default =>  1 },
+    'develop-governor'             => { isa => PositiveOrZeroInt, default =>  1 },
+    'develop-library'              => { isa => PositiveOrZeroInt, default =>  1 },
+    'develop-market'               => { isa => PositiveOrZeroInt, default =>  1 },
+    'develop-university'           => { isa => PositiveOrZeroInt, default =>  1 },
+    'develop-monopoly'             => { isa => PositiveOrZeroInt, default =>  2 },
+    'develop-plenty'               => { isa => PositiveOrZeroInt, default =>  2 },
+    'develop-road'                 => { isa => PositiveOrZeroInt, default =>  2 },
+    'develop-soldier'              => { isa => PositiveOrZeroInt, default => 13 },
 
     'chits'                        => { isa => "ArrayRef[Pioneers::Types::ChitValue]", parse_as => "ChitList" },
-    'nosetup'                      => { isa => "ArrayRef[ArrayRef[Pioneers::Types::NonNegInt]]", parse_as => "NoSetupList" },
+    'nosetup'                      => { isa => ArrayRef[ArrayRef[PositiveOrZeroInt]], parse_as => "NoSetupList" },
 );
 
 while (my ($param, $settings) = each %parameters) {

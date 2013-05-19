@@ -33,39 +33,13 @@ has "+pin" => (
 );
 
 
-method is_resource_hex() {
-    my $type = $self->type;
-    return 1 if $type =~ /[pmfht]/;
-    return 0 if $type =~ /[dg]/;
-    die "Unknown type";
-}
-
-method is_production_hex() {
-    my $type = $self->type;
-    return 1 if $type =~ /[gpmfht]/;
-    return 0 if $type =~ /[d]/;
-    die "Unknown type";
-}
-
-
-method consumes_chit() {
-    my $type = $self->type;
-    return 1 if $type =~ /[gpmfht]/;
-    return 0 if $type =~ /[d]/;
-    die "Unknown type";
-}
-
-method increments_chit() {
-    return 1
-}
-
-
 method to_map_string($map) {
     my $str = $self->type;
-    $str .= $map->_step_chit_index if $self->increments_chit;
+    $str .= $map->_step_chit_index if $self->has_prop("increment_chit");
     $str .= "+" if $self->pin;
     return $str;
 }
+
 
 
 

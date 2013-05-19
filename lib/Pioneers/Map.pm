@@ -29,7 +29,6 @@ Pioneers::Map - Pioneers Map Object
 has hex_map => (
     is         => 'rw',
     isa        => 'ArrayRef[ArrayRef[Maybe[Pioneers::Map::Hex]]]',
-    default    => sub { [] },
 );
 
 method hexes() {
@@ -37,7 +36,7 @@ method hexes() {
 }
 
 method nr_chits() {
-    return scalar grep +($_ && $_->consumes_chit), map @$_, @{$self->hex_map};
+    return scalar grep +($_ && $_->has_prop("consume_chit")), map @$_, @{$self->hex_map};
 }
 
 

@@ -14,8 +14,6 @@ our %EXPORT_TAGS = (
 our @EXPORT_OK = map @$_, values %EXPORT_TAGS;
 $EXPORT_TAGS{all} = \@EXPORT_OK;
 
-our $GRAMMAR;
-
 
 =pod
 
@@ -79,6 +77,10 @@ my %tokens = (
     EOF               => [ qr/\G\z/ ],
 );
 
+my %typemap = (
+    "MooseX::Types::Common::Numeric::PositiveInt" => "PosInt",
+    "MooseX::Types::Common::Numeric::PositiveOrZeroInt" => "NonNegInt",
+);
 
 sub build_parameter_rules {
     my (@rules, %types);
@@ -86,6 +88,7 @@ sub build_parameter_rules {
     while (my ($param, $settings) = each %Pioneers::Config::parameters) {
         my $type = $$settings{parse_as} || $$settings{isa};
         $type =~ s/^Pioneers::Types:://;
+        $type = $typemap{$type} if exists($typemap{$type});
         $types{$type} //= Regexp::Assemble->new;
         $types{$type}->add(quotemeta($param));
     }
@@ -104,10 +107,9 @@ sub build_parameter_rules {
 }
 
 sub build_grammar {
-    return if $GRAMMAR;
     my @parameter_rules = build_parameter_rules();
 
-    $GRAMMAR = Marpa::R2::Grammar->new({
+    my $grammar = Marpa::R2::Grammar->new({
         start => "config",
         actions => "Pioneers::Config::Parser::Actions",
         default_action => '_1',
@@ -151,7 +153,7 @@ sub build_grammar {
         ],
     });
 
-    $GRAMMAR->precompute;
+    return $grammar->precompute;
 }
 
 
@@ -163,10 +165,11 @@ sub parse_file {
 }
 
 sub parse_string {
-    build_grammar();
-    my $input = shift;
+    state $grammar = build_grammar();
+
+    my ($input, $actions) = shift;
     my $rec = Marpa::R2::Recognizer->new({
-        grammar         => $GRAMMAR,
+        grammar         => $grammar,
         ranking_method  => 'rule',
     });
 
@@ -230,7 +233,8 @@ sub lex {
 
 
 sub PARSE_ERROR {
-    my ($input, $pos, $expected) = @_;
+    my ($input, $pos, $expected, $msg) = @_;
+    $msg //= "Parse error";
 
     my $line = 1+(substr($input,0,$pos) =~ tr/\n/\n/);
     my $eol  = index($input,"\n",$pos);
@@ -243,9 +247,9 @@ sub PARSE_ERROR {
     }
 
     if ($expected and @$expected) {
-        die "Parse error on line $line at $at, expecting: @$expected\n";
+        die "$msg on line $line at $at, expecting: @$expected\n";
     } else {
-        die "Parse error on line $line at $at.\n";
+        die "$msg on line $line at $at.\n";
     }
 }
 

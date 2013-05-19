@@ -22,6 +22,27 @@ Pioneers::Map::SeaHex - Pioneers SeaHex object
 
 =head1 USAGE
 
+=over 4
+
+=item type
+
+Hex type (default "s")
+
+=item pin
+
+Pinning. Has no effect, but is default true for classification purposes.
+
+=item port
+
+One of the port symbols (?, g, o, l, b, w)
+
+=item port_orientation
+
+Orientation: 0..5 where 0 puts port pointing east (usable by the eastern
+hex), then proceeds counter-clockwise.
+
+=back
+
 =cut
 
 has "+type" => (
