@@ -9,6 +9,8 @@ use Pioneers::Types;
 use Pioneers::Map::LandHex;
 use Pioneers::Map::SeaHex;
 
+use List::Util qw/ shuffle /;
+
 =pod
 
 =head1 NAME
@@ -62,6 +64,80 @@ method to_map_string() {
     return $str;
 }
 
+=head3 apply
+
+ $map->apply(sub { ... });
+
+Executes the subroutine for each hex in the map. Passes the hex and its
+location to the callback: callback($hex, $i, $j)
+
+=cut
+
+method apply($cb) {
+    my $map = $self->hex_map;
+    for my $i (0..$#{$map}) {
+        for my $j (0..$#{$$map[$i]}) {
+            local $_ = $$map[$i][$j];
+            next unless $_;
+            $cb->($_, $i, $j);
+        }
+    }
+}
+
+
+=head3 randomize_hexes
+
+ $map->randomize_hexes(@props);
+
+Shuffles hexes which match ANY of the given properties.
+
+ $map->randomize_hexes("resource");   # just 5 basic resources
+ $map->randomize_hexes("production"); # resource or gold
+ $map->randomize_hexes("land");       # include deserts
+ $map->randomize_hexes("hex");        # ALL
+
+=cut
+
+method randomize_hexes(@props) {
+    my $map = $self->hex_map;
+    my (@loc, @hex);
+    $self->apply(sub {
+        my ($hex, $i, $j) = @_;
+        return unless $hex and $hex->has_any_props(@props);
+        push @loc, [$i,$j];
+        push @hex, $hex;
+    });
+
+    @loc = shuffle(@loc);
+    for my $idx (0..$#loc) {
+        my ($i, $j) = @{$loc[$idx]};
+        $$map[$i][$j] = $hex[$idx];
+    }
+}
+
+=head3 shuffle_ports
+
+ $map->shuffle_ports;
+
+Shuffles ports (shuffles types without moving any ports or changing their
+orientation.
+
+=cut
+
+method shuffle_ports() {
+    my (@type, @hex);
+    $self->apply(sub {
+        my ($hex, $i, $j) = @_;
+        return unless $hex and "s" eq $hex->type and $hex->has_port;
+        push @type, $hex->port;
+        push @hex, $hex;
+    });
+
+    @type = shuffle(@type);
+    for my $idx (0..$#type) {
+        $hex[$idx]->port($type[$idx]);
+    }
+}
 
 
 

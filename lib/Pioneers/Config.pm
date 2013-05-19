@@ -78,6 +78,10 @@ while (my ($param, $settings) = each %parameters) {
 has map => (
     is         => 'rw',
     isa        => 'Pioneers::Map',
+    handles    => {
+        randomize_hexes => "randomize_hexes",
+        shuffle_ports   => "shuffle_ports",
+    },
 );
 
 
