@@ -1,4 +1,3 @@
-variant islands
 title 5 - The Five Islands (V)
 island-discovery-bonus 1,0
 check-victory-at-end-of-turn

@@ -1,4 +1,3 @@
-variant islands
 title 6 - The Six Islands (VI)
 island-discovery-bonus 1,0
 check-victory-at-end-of-turn

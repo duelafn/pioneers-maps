@@ -1,4 +1,3 @@
-variant islands
 title 4 - The Four Islands (IV)
 island-discovery-bonus 1,2
 check-victory-at-end-of-turn

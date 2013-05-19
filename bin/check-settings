@@ -48,6 +48,7 @@ sub lint {
     return if $OPT{parse_only};
     my @errors;
 
+    push @errors, "Obsolete rule: 'variant'"                    if $config->variant;
     push @errors, "sevens-rule is not '1'"                      unless $config->sevens_rule and 1 == $config->sevens_rule;
     push @errors, "check-victory-at-end-of-turn is not set"     unless $config->check_victory_at_end_of_turn;
     push @errors, "random-terrain is not set"                   unless $config->random_terrain;
