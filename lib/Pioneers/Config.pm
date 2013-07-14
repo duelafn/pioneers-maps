@@ -1,4 +1,5 @@
 package Pioneers::Config;
+use Carp;
 use Moose;
 use MooseX::UndefTolerant;
 use MooseX::StrictConstructor;
@@ -90,6 +91,133 @@ sub load {
     return Pioneers::Config::Parser::parse_file($file);
 }
 
+
+=head3 shuffle_map
+
+Shuffles the map - this is a weak randomization in that ports are not
+moved. However is more randomization that "random-terrain" can provide and
+will ensure that the chit assignment is valid.
+
+Actions:
+
+ - permutes ports (without moving any)
+ - permutes land haxes (including gold or deserts)
+ - permutes chits (enforces the no adjacent 6 or 8 rule)
+
+=cut
+
+method shuffle_map() {
+    $self->shuffle_ports;
+    $self->randomize_hexes("land");
+    $self->randomize_chits;
+}
+
+
+=head3 randomize_chits
+
+Randomizes the chits of a map while enforcing the rule that no 6's or 8's
+may be adjacent.
+
+NOTE: This method may die if there are no valid randomizations (or if it
+has problems finding one).
+
+=cut
+
+sub randomize_chits {
+    my ($self, $trials, $idx_trials) = @_;
+    $trials     //= 10;
+    $idx_trials //= 10;
+    croak "Unable to randomize chits" unless $trials;
+
+    my $map   = $self->map;
+    my @chits = @{$self->chits};
+    my (@coor, %val);
+
+    $map->apply(sub {
+        my ($hex, $i, $j) = @_;
+        return unless $hex->has_prop("consume_chit");
+        $val{"$i,$j"} = shift @chits;
+        push @coor, [$i,$j];
+    });
+
+
+    # Basically, we are performing a Fisher-Yates shuffle but rejecting
+    # (and redo-trying) any swaps which would make an invalid map. I'm
+    # pretty sure that this produces a biased shuffle (the probable
+    # legality of certain swaps will depend on the initial conditions of
+    # the chits). However, I expect it will be good enough.
+    my $idx = @coor;
+    my $_idx_trials = $idx_trials;
+  IDX:
+    while (--$idx) {
+        my $swp = int rand($idx+1);
+        my ($i, $j) = @{$coor[$idx]};# The coordinates we are fixing
+        my ($a, $b) = @{$coor[$swp]};# Where we are stealing from
+
+        # $i, $j may equal $a, $b or be neighbors or completely separated, however,
+        #   - we are working backwards through the hexes (from bottom right)
+        #   - thus, once the chit at (i,j) is placed, it will not be moved
+        #   - thus, its neighbors below and right of it will never move
+
+        # Need only check "forward" hexes if we ourselves are a 6 or 8
+        if ($val{"$a,$b"} =~ /[68]/) {
+            for (qw/ e sw se /) {
+                next unless my ($x, $y) = $map->neighbor($i, $j, $_);
+                if ($val{"$x,$y"} and $val{"$x,$y"} =~ /[68]/) {
+                    # bad swap
+                    if ($_idx_trials-- > 0) {
+                        redo IDX;# try again
+                    } else {
+                        # Tried too many times (most likely got into the
+                        # corner with a bunch of reds left over), start
+                        # over from scratch
+                        return $self->randomize_chits($trials-1, $idx_trials);
+                    }
+                }
+            }
+        }
+
+        # Success, reset the local trial counter, perform the swap and move on
+        $_idx_trials = $idx_trials;
+        @val{"$i,$j", "$a,$b"} = @val{"$a,$b", "$i,$j"};
+    }
+
+    @chits = map $val{"$$_[0],$$_[1]"}, @coor;
+    $self->chits(\@chits);
+
+    return 1;
+}
+
+
+=head3 chits_ok
+
+Return true if the chit arrangement is considered valid (that is, no
+adjacent 6's or 8's).
+
+=cut
+
+method chits_ok() {
+    my $map   = $self->map;
+    my @chits = @{$self->chits};
+    my @chit_matrix;
+
+    $map->apply(sub {
+        my ($hex, $i, $j) = @_;
+        return unless $hex->has_prop("consume_chit");
+        push @chit_matrix, [] if $i > $#chit_matrix;
+        $chit_matrix[$i][$j] = shift @chits;
+
+        next unless $chit_matrix[$i][$j] =~ /[68]/;
+
+        # Need only check "backward" hexes:
+        for (qw/ nw ne w /) {
+            next unless my ($a, $b) = $map->neighbor($i, $j, $_);
+            return 0 if $chit_matrix[$a][$b] and $chit_matrix[$a][$b] =~ /[68]/;
+        }
+    });
+
+    return 1;
+}
 
 
 method to_map_string() {

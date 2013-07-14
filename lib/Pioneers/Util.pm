@@ -109,6 +109,29 @@ sub random_chits {
 }
 
 
+=head3
+
+ my $n = chit_deviation(\@chits);
+
+Compute a root mean squared deviation from the perfect chit distribution.
+Can be used in estimating game difficulty.
+
+=cut
+
+sub chit_deviation {
+    my $chits = shift;
+    my (%actual, %perfect);
+    $actual{$_}++  for @$chits;
+    $perfect{$_}++ for distribute_chits(0+@$chits, 100);
+
+    my $var = 0;
+    for (2..6,8..12) {
+        $var += ($actual{$_}//0 - $perfect{$_}//0) ** 2;
+    }
+
+    return sqrt($var / 10);
+}
+
 
 
 

@@ -1,0 +1,33 @@
+check-victory-at-end-of-turn
+chits 2,5,4,6,3,9,8,11,11,10,6,3,8,4,8,10,11,12,10,5,4,9,5,9,12,3,2,6
+develop-chapel 1
+develop-governor 1
+develop-library 1
+develop-market 1
+develop-monopoly 3
+develop-plenty 3
+develop-road 3
+develop-soldier 19
+develop-university 1
+domestic-trade
+num-cities 4
+num-city-walls 3
+num-players 5
+num-roads 15
+num-settlements 5
+random-terrain
+resource-count 24
+sevens-rule 1
+title 5|6 - player hex
+victory-points 10
+map
+-,-,s?5,s,s?4,s
+-,s,t0,f1,m2,sw4
+-,so5,f3,p4,t5,p6,s
+s,t7,p8,h9,p10,h11,s?3
+s?0,t12,m13,h14,m15,p16,h17,s
+s,t18,m19,p20,m21,f22,sb3
+-,sl1,d23,d24,h25,h26,s
+-,s,f27,f28,m29,sg2
+-,-,sw1,s,s?2,s
+.

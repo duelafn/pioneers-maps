@@ -1,0 +1,94 @@
+#!/usr/bin/perl -w
+# This module is Copyright (c) 2013 Dean Serenevy. All rights reserved.
+#
+# You may distribute under the terms of either the GNU General Public License
+# or the Artistic License, as specified in the Perl README file.
+use strict; use warnings; use 5.010;
+
+use Getopt::Long qw/:config bundling/;
+use Hash::Util qw/ lock_keys /;
+our $VERSION = '0.0.0';
+
+our %OPT = (  );
+our @OPT_SPEC =
+qw/ help|h version noact|no-act|dry-run DEBUG
+    output|o=s
+  /;
+sub USAGE { <<"__USAGE__" };
+usage: $_[0] [options] ACTION ARG(S)
+
+ACTIONS
+
+  $_[0] shuffle FILENAME
+
+    Performs a "weak" randomization of an existing file.
+
+      - permutes ports (without moving any)
+      - permutes land haxes (including gold or deserts)
+      - permutes chits (enforces the no adjacent 6 or 8 rule)
+__USAGE__
+
+use lib 'lib';
+use Path::Class;
+use Pioneers::Config;
+
+our %ACTIONS; sub action;
+action help => sub { usage() };
+
+
+action shuffle => sub {
+    my ($action, $file) = @_;
+
+    my $config = Pioneers::Config->load($file);
+    $config->shuffle_map;
+    say { output() } $config->to_map_string;
+};
+
+
+
+get_options( \%OPT, @OPT_SPEC );
+call_action( @ARGV );
+
+
+sub action {
+    my $name = shift;
+    $name = [ $name ] unless ref($name);
+    unshift @_, "-action" if 1 == @_;
+    my %a = @_;
+    $a{-name} //= $$name[0];
+
+    $ACTIONS{$_} = \%a for @$name;
+}
+
+sub call_action {
+    my $name = shift // "";
+    usage("No such action $name") unless exists $ACTIONS{$name};
+    my $action = $ACTIONS{$name};
+
+    my @arg = @_;
+    @arg = $$action{-build_args}->( $action, @_ ) if $$action{-build_args};
+
+    $$action{-action}->( $action, @arg );
+}
+
+sub output {
+    return \*STDOUT unless $OPT{output};
+    open my $F, ">", $OPT{output} or die "Error writing to $OPT{output}: $!";
+    return $F;
+}
+
+sub get_options {
+    my $OPT = shift;
+    GetOptions $OPT, @_ or usage(1);
+    usage() if $$OPT{help} || $$OPT{version};
+    lock_keys(%$OPT, keys %$OPT, map /^(\w+)/, @_);
+}
+
+sub usage {
+    my $status = (@_ && $_[0] =~ /^\d+$/) ? shift(@_) : 0+@_;
+    print @_, "\n" if @_;
+    require File::Spec; my $exe = (File::Spec->splitpath($0))[2];
+    $OPT{$_} = $OPT{$_} ? "enabled" : "disabled" for map /^(\w+).*!/, @OPT_SPEC;
+    print $OPT{version} ? "$exe version $VERSION\n" : USAGE($exe);
+    exit $status;
+}

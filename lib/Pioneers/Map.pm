@@ -33,6 +33,13 @@ has hex_map => (
     isa        => 'ArrayRef[ArrayRef[Maybe[Pioneers::Map::Hex]]]',
 );
 
+has config => (
+    is         => 'rw',
+    isa        => 'Pioneers::Config',
+    predicate  => 'has_config',
+    weak_ref   => 1,
+);
+
 method hexes() {
     return map @$_, @{$self->hex_map};
 }
@@ -198,8 +205,8 @@ method neighbor($i, $j, $dir) {
 
     # nw, ne, sw, se  (disregarding bad input)
     if (2 == length($dir)) {
-        $di = ($dir =~ /^n/ ? 1 : -1);
-        $dj = $$DJ[($self->layout + $i) % 2][$dir =~ /^w/ ? 0 : 1];
+        my $di = ($dir =~ /n/ ? -1 : 1);
+        my $dj = $$DJ[($self->layout + $i) % 2][$dir =~ /w/ ? 0 : 1];
         ($i1, $j1) = ($i + $di, $j + $dj);
     }
 
