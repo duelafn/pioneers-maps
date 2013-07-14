@@ -54,6 +54,8 @@ has pin => (
 has map => (
     is         => 'rw',
     isa        => 'Pioneers::Map',
+    predicate  => 'has_map',
+    weak_ref   => 1,
 );
 
 
