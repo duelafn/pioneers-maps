@@ -5,7 +5,7 @@ use MooseX::UndefTolerant;
 use MooseX::StrictConstructor;
 use Method::Signatures::Simple;
 use re 'taint'; use 5.010;
-our $VERSION = 0.0000;# Created: 2013-02-09
+our $VERSION = 1.0309;# Created: 2013-02-09
 use Pioneers::Util qw/ subhash /;
 use Pioneers::Types;
 use Pioneers::Map;
@@ -230,7 +230,13 @@ method to_map_string() {
         next unless defined($val);
 
         if ($parameters{$param}{isa} eq 'Bool') {
-            $output .= "$param\n";
+            $output .= "$param\n" if $val;
+        }
+
+        elsif ($param eq 'nosetup') {
+            for my $vertex (@$val) {
+                $output .= "$param @$vertex\n";
+            }
         }
 
         else {
