@@ -8,14 +8,26 @@ use strict; use warnings; use 5.010;
 
 use Getopt::Long qw/:config bundling/;
 use Hash::Util qw/ lock_keys /;
-our $VERSION = '0.0000';# Created: 2013-02-09
+our $VERSION = '0.9.0';
 
-our %OPT = (  );
-our @OPT_SPEC = qw/ help|h version noact|no-act|dry-run DEBUG list_only|l list_good|L parse_only|p /;
+our %OPT = (
+    random_terrain => 1,
+    fixed_desert => 1,
+    fixed_goldmine => 1,
+);
+our @OPT_SPEC =
+qw/ help|h version noact|no-act|dry-run DEBUG list_only|l list_good|L parse_only|p
+    random_terrain|random-terrain!
+    fixed_desert|fixed-desert!
+    fixed_goldmine|fixed-goldmine!
+    fix|f
+  /;
 sub USAGE { <<"__USAGE__" };
 usage: $_[0] [options]
 
 OPTIONS
+
+ --fix, -f           correct any potential "errors"
 
  -p                  parse only - only display parser errors
  -l                  list only  - list file names only, not individial errors
@@ -47,19 +59,36 @@ sub lint {
     }
     return if $OPT{parse_only};
     my @errors;
+    my $BEFORE = $config->to_map_string;
+
+    if ($OPT{fix}) {
+        $config->variant('');
+        $config->sevens_rule(1);
+        $config->check_victory_at_end_of_turn(1);
+        $config->random_terrain($OPT{random_terrain});
+        $config->strict_trade(0);
+        $config->domestic_trade(1);
+        $config->num_city_walls(3) if $config->num_players >= 5 and !$config->num_city_walls;
+    }
 
     push @errors, "Obsolete rule: 'variant'"                    if $config->variant;
     push @errors, "sevens-rule is not '1'"                      unless $config->sevens_rule and 1 == $config->sevens_rule;
     push @errors, "check-victory-at-end-of-turn is not set"     unless $config->check_victory_at_end_of_turn;
-    push @errors, "random-terrain is not set"                   unless $config->random_terrain;
+    push @errors, "random-terrain is not set"                   if $OPT{random_terrain} and !$config->random_terrain;
     push @errors, "title does not follow '\\d - NAME' pattern"  unless $config->title =~ /^[\d|]+ \- /;
     push @errors, "strict-trade is set"                         if $config->strict_trade;
     push @errors, "domestic-trade is not set"                   unless $config->domestic_trade;
 
-    push @errors, "desert without '+'"                          if grep +($_ and $_->type eq 'd' and !$_->pin), $config->map->hexes;
-    push @errors, "gold mine without '+'"                       if grep +($_ and $_->type eq 'g' and !$_->pin), $config->map->hexes;
+    push @errors, "desert without '+'"                          if $OPT{fixed_desert} and grep +($_ and $_->type eq 'd' and !$_->pin), $config->map->hexes;
+    push @errors, "gold mine without '+'"                       if $OPT{fixed_goldmine} and grep +($_ and $_->type eq 'g' and !$_->pin), $config->map->hexes;
 
     push @errors, "num-city-walls is zero, but num players ≥ 5" if $config->num_players >= 5 and !$config->num_city_walls;
+
+    if ($OPT{fix} and !@errors and $BEFORE ne $config->to_map_string) {
+        my $string = $config->to_map_string;
+        open my $F, ">", "$file" or die "Error writing to $file: $!";
+        say $F $string;
+    }
 
     if ($OPT{list_only} or $OPT{list_good}) {
         say $file if @errors && $OPT{list_only} or !@errors && $OPT{list_good};
