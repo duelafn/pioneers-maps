@@ -3,7 +3,7 @@ use Moose;
 use MooseX::StrictConstructor;
 use Method::Signatures::Simple;
 use re 'taint'; use 5.010;
-our $VERSION = 0.0000;# Created: 2013-02-09
+our $VERSION = 1.0309;# Created: 2013-02-09
 
 use Pioneers::Types;
 use Pioneers::Map::LandHex;
@@ -125,6 +125,7 @@ method apply($cb) {
 
 =head3 randomize_hexes
 
+ $map->randomize_hexes(\%opt, @props);
  $map->randomize_hexes(@props);
 
 Shuffles hexes which match ANY of the given properties.
@@ -137,10 +138,12 @@ Shuffles hexes which match ANY of the given properties.
 =cut
 
 method randomize_hexes(@props) {
+    my $opt = (@props and 'HASH' eq ref($props[0])) ? shift @props : { };
     my $map = $self->hex_map;
     my (@loc, @hex);
     $self->apply(sub {
         my ($hex, $i, $j) = @_;
+        return if $$opt{keep_sea_border} and 's' eq $hex->type and 6 != grep { $_->[2] } $self->neighbors($i, $j);
         return unless $hex and $hex->has_any_props(@props);
         push @loc, [$i,$j];
         push @hex, $hex;
