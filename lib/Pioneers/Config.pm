@@ -149,7 +149,9 @@ sub randomize_chits {
     my $idx = @coor;
     my $_idx_trials = $idx_trials;
   IDX:
-    while (--$idx) {
+    # Note: Need to enter block when $idx == 0 also so we check for two red
+    #       numbers in upper right corner.
+    while (--$idx >= 0) {
         my $swp = int rand($idx+1);
         my ($i, $j) = @{$coor[$idx]};# The coordinates we are fixing
         my ($a, $b) = @{$coor[$swp]};# Where we are stealing from
