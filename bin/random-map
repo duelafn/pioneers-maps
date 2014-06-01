@@ -76,7 +76,7 @@ action randomize => sub {
             $config->randomize_chits;
             1;
         };
-        warn "Unable to produce good distribution\n" if $_ == $N;
+        warn "Unable to produce good distribution: $@\n" if $_ == $N;
     }
 
     $config->random_terrain(0);
