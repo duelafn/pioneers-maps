@@ -55,7 +55,9 @@ action shuffle => sub {
 
     my $config = Pioneers::Config->load($file);
     $config->shuffle_map;
-    $config->random_terrain(0);
+    for my $hex ($config->map->hexes) {
+        $hex->pin($hex->type() =~ /d|g/) if $hex;
+    }
     $config->title($OPT{title}) if $OPT{title};
     say { output() } $config->to_map_string;
 };
