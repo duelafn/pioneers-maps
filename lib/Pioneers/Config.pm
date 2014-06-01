@@ -156,6 +156,11 @@ sub randomize_chits {
         my ($i, $j) = @{$coor[$idx]};# The coordinates we are fixing
         my ($a, $b) = @{$coor[$swp]};# Where we are stealing from
 
+        # Do not want 2, 12, 6, or 8 on gold mines
+        if ($val{"$a,$b"} =~ /^(?:2|12|6|8)$/) {
+            redo IDX if 'g' eq $map->hex_map->[$i]->[$j]->type and $_idx_trials-- > 0;
+        }
+
         # $i, $j may equal $a, $b or be neighbors or completely separated, however,
         #   - we are working backwards through the hexes (from bottom right)
         #   - thus, once the chit at (i,j) is placed, it will not be moved
