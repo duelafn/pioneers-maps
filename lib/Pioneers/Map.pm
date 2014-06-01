@@ -135,24 +135,48 @@ Shuffles hexes which match ANY of the given properties.
  $map->randomize_hexes("land");       # include deserts
  $map->randomize_hexes("hex");        # ALL
 
+=over 4
+
+=item keep_sea_border
+
+If true, any sea hexes adjacent to the edge or a table-top space will not
+be moved. This preserves a border of sea if present.
+
+=item allow_adjacent_goldmines
+
+If true, will not check that no gold mines are adjacent.
+
 =cut
 
 method randomize_hexes(@props) {
     my $opt = (@props and 'HASH' eq ref($props[0])) ? shift @props : { };
     my $map = $self->hex_map;
-    my (@loc, @hex);
-    $self->apply(sub {
-        my ($hex, $i, $j) = @_;
-        return if $$opt{keep_sea_border} and 's' eq $hex->type and 6 != grep { $_->[2] } $self->neighbors($i, $j);
-        return unless $hex and $hex->has_any_props(@props);
-        push @loc, [$i,$j];
-        push @hex, $hex;
-    });
+    while (1) {
+        my (@loc, @hex);
+        $self->apply(sub {
+            my ($hex, $i, $j) = @_;
+            return if $$opt{keep_sea_border} and 's' eq $hex->type and 6 != grep { $_->[2] } $self->neighbors($i, $j);
+            return unless $hex and $hex->has_any_props(@props);
+            push @loc, [$i,$j];
+            push @hex, $hex;
+        });
 
-    @loc = shuffle(@loc);
-    for my $idx (0..$#loc) {
-        my ($i, $j) = @{$loc[$idx]};
-        $$map[$i][$j] = $hex[$idx];
+        @loc = shuffle(@loc);
+        for my $idx (0..$#loc) {
+            my ($i, $j) = @{$loc[$idx]};
+            $$map[$i][$j] = $hex[$idx];
+        }
+
+        my $all_ok = 1;
+        unless ($$opt{allow_adjacent_goldmines}) {
+            for my $idx (0..$#loc) {
+                next unless $hex[$idx] and 'g' eq $hex[$idx]->type;
+                my ($i, $j) = @{$loc[$idx]};
+                $all_ok = 0 if grep { 'g' eq $$_[2]->type } $self->neighbors( $i, $j );
+            }
+        }
+
+        return if $all_ok;
     }
 }
 
