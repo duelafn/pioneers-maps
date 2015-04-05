@@ -248,10 +248,10 @@ method to_map_string() {
 
         else {
             my $str;
-            given (ref($val)) {
-                when ('')      { $str = $val }
-                when ('ARRAY') { $str = join ",", @$val }
-                default        { die "No stringification for object of reference $_" }
+            for (ref($val)) {
+                if ($_ eq '')         { $str = $val }
+                elsif ($_ eq 'ARRAY') { $str = join ",", @$val }
+                else                  { die "No stringification for object of reference $_" }
             }
             $str =~ s/\n/\n$param /mg;
             $output .= "$param $str\n";
