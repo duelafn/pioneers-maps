@@ -9,10 +9,11 @@ use Getopt::Long qw/:config bundling/;
 use Hash::Util qw/ lock_keys /;
 our $VERSION = '0.5.0';
 
-our %OPT = (  );
+our %OPT = ( trials => 20 );
 our @OPT_SPEC =
 qw/ help|h version noact|no-act|dry-run DEBUG
     output|o=s title|t=s
+    trials=i
   /;
 sub USAGE { <<"__USAGE__" };
 usage: $_[0] [options] ACTION ARG(S)
@@ -39,6 +40,8 @@ ACTIONS
 OPTIONS
 
  --title, -t <name>   set name of output map (default, keep same)
+
+ --trials <n>         number trials if randomization is invalid (default: $OPT{trials})
 __USAGE__
 
 use lib 'lib';
@@ -54,7 +57,10 @@ action shuffle => sub {
     my ($action, $file) = @_;
 
     my $config = Pioneers::Config->load($file);
-    $config->shuffle_map;
+    my $rv;
+    my $trials = $OPT{trials};
+    eval { $rv = $config->shuffle_map } while !$rv and $trials-- > 0;
+    die "Unable to shuffle map under current conditions!\n" unless $rv;
     for my $hex ($config->map->hexes) {
         $hex->pin($hex->type() =~ /d|g/) if $hex;
     }
@@ -68,7 +74,7 @@ action randomize => sub {
     my $config = Pioneers::Config->load($file);
     $config->nosetup([]);
 
-    my $N = 20;
+    my $N = $OPT{trials};
     for (1..$N) {
         last if eval {
             $config->chits([ random_chits($config->map->nr_chits, ensure_all_numbers => 1, best_of => 50) ]);
