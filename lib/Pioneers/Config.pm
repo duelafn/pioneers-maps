@@ -46,6 +46,7 @@ our %parameters = (
     'random-terrain'               => { isa => Bool, default => 0 },
     'use-pirate'                   => { isa => Bool, default => 1 },
     'strict-trade'                 => { isa => Bool, default => 0 },
+    'use-dice-deck'                => { isa => Bool, default => 0 },
 
     'num-bridges'                  => { isa => PositiveOrZeroInt, default =>  3 },
     'num-cities'                   => { isa => PositiveOrZeroInt, default =>  4 },
@@ -53,8 +54,10 @@ our %parameters = (
     'num-roads'                    => { isa => PositiveOrZeroInt, default => 15 },
     'num-settlements'              => { isa => PositiveOrZeroInt, default =>  5 },
     'num-ships'                    => { isa => PositiveOrZeroInt, default => 15 },
+    'num-removed-dice-cards'       => { isa => PositiveOrZeroInt, default =>  5 },
 
     'resource-count'               => { isa => PositiveInt, default => 30 },
+    'num-dice-decks'               => { isa => PositiveInt, default =>  2 },
 
     'develop-chapel'               => { isa => PositiveOrZeroInt, default =>  1 },
     'develop-governor'             => { isa => PositiveOrZeroInt, default =>  1 },
