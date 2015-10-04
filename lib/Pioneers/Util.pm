@@ -145,6 +145,7 @@ sub random_chits {
             $opt{best_of}--;
             my $score = chit_deviation(\@chits, \@dist);
             ($best, $best_score) = (\@chits, $score) if !$best or $best_score > $score;
+            redo;
         }
 
         return shuffle( $best ? @$best : @chits );
