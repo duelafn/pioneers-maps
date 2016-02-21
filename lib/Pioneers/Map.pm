@@ -3,7 +3,7 @@ use Moose;
 use MooseX::StrictConstructor;
 use Method::Signatures::Simple;
 use re 'taint'; use 5.010;
-our $VERSION = 1.0309;# Created: 2013-02-09
+our $VERSION = 3.0011;# Created: 2013-02-09
 
 use Pioneers::Types;
 use Pioneers::Map::LandHex;
@@ -32,6 +32,13 @@ has hex_map => (
     is         => 'rw',
     isa        => 'ArrayRef[ArrayRef[Maybe[Pioneers::Map::Hex]]]',
 );
+
+method get_hex($i, $j) {
+    my $a = $self->hex_map;
+    return unless $#{$a} >= $i;
+    return unless $#{$$a[$i]} >= $j;
+    return $$a[$i][$j];
+}
 
 has config => (
     is         => 'rw',
@@ -181,6 +188,79 @@ method randomize_hexes(@props) {
 }
 
 
+=head3 randomize_ports
+
+ $map->randomize_ports(\%opt);
+
+Randomize ports, possibly moving them to different hexes. Ensures that
+ports end up on water and point toward land.
+
+=over 4
+
+=item allow_crossings
+
+When true, the "legs" of a port will be allowed to straddle a water hex as
+long as each leg still touches a land.
+
+=item allow_adjacent
+
+When true, ports will be allowed to be adjacent to each other. Otherwise,
+ports will never be adjacent which spreads them out a bit and also ensures
+that no vertex will be able to make use of two ports simultaneously.
+
+=back
+
+=cut
+
+method randomize_ports($opt) {
+    $opt ||= {};
+    my (@type, @hex);
+
+    # Get all water hexes and all ports used.
+    $self->apply(sub {
+        my ($hex, @ij) = @_;
+        return unless $hex and "s" eq $hex->type;
+        push @hex, \@ij;
+        return unless $hex->has_port;
+        push @type, $hex->port;
+        $hex->remove_port;
+    });
+
+    my @_type = shuffle(@type);
+    my @_hex  = shuffle(@hex);
+
+  HEX:
+    while (@_type and @_hex) {
+        my $pos = shift @_hex;
+        # Looking for directions we can point so that both legs of the port
+        # are touching land. For each direction, if there is actually a
+        # land in that direction then all is well, both legs of the port
+        # will be on land. However, if we are allow crossings, we need BOTH
+        # adjacent hexes to be populated. Luckily, we can just have each
+        # adjacent cound for 1 and the middle count for 2 and any direction
+        # with a total of 2 or more counts will have the connections we
+        # need (either the center or both sides -- or all three, of course).
+        my %ok;
+        for my $dir (0..5) {
+            my $hex = $self->neighbor(@$pos, $dir);
+            next unless $hex;
+            next HEX if $hex->has_prop("sea") and $hex->port and not $$opt{allow_adjacent};
+            next unless $hex->has_prop("land");
+            $ok{$dir} += 2;
+            next unless $$opt{allow_crossings};
+            $ok{($dir + 1) % 6} += 1;
+            $ok{($dir - 1) % 6} += 1;
+        }
+
+        my @ok = grep $ok{$_} > 1, keys %ok;
+        redo unless @ok;
+        my $hex = $self->get_hex(@$pos);
+        $hex->port(shift @_type);
+        $hex->port_orientation((shuffle(@ok))[0]);
+    }
+}
+
+
 =head3 shuffle_ports
 
  $map->shuffle_ports;
@@ -211,7 +291,8 @@ method shuffle_ports() {
  my ($i, $j, $hex) = $map->neighbor( $i, $j, $direction );
 
 Returns the coordinates of the neighbor in the requested direction.
-C<$direction> should be one of the following strings: nw, ne, e, se, sw, w.
+C<$direction> should be one of the following strings or numbers: e (0), ne
+(1), nw (2), w (3), sw (4), se (5)
 
 Returns an empty list if traveling in the requested direction takes you off
 the edge of the map. However, C<(i, j, undef)> will be returned if the
@@ -227,6 +308,15 @@ method neighbor($i, $j, $dir) {
     # If layout == row parity: the neighboring hexes are in same and right column of ourselves
     # If layout != row parity: the neighboring hexes are in same and left  column of ourselves
     state $DJ = [ [0, 1], [-1, 0] ];
+    state $dir_map = {
+        0 =>  "e",
+        1 => "ne",
+        2 => "nw",
+        3 =>  "w",
+        4 => "sw",
+        5 => "se",
+    };
+    $dir = $$dir_map{$dir} if exists $$dir_map{$dir};
 
     my ($i1, $j1);
 

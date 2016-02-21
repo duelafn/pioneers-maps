@@ -7,7 +7,7 @@ use strict; use warnings; use 5.010;
 
 use Getopt::Long qw/:config bundling/;
 use Hash::Util qw/ lock_keys /;
-our $VERSION = '0.5.0';
+our $VERSION = '0.5.1';
 
 our %OPT = ( trials => 20 );
 our @OPT_SPEC =
@@ -34,8 +34,9 @@ ACTIONS
 
       - removes all "nosetup" vertices
       - generates new chits following a statistically optimal distribution
-      - shuffles all hexes purely randomly (may break ports)
+      - shuffles all hexes purely randomly
       - shuffles chits (enforcing the no adjacent 6 or 8 rule)
+      - randomize ports and ensures they connect to land
 
 OPTIONS
 
@@ -80,6 +81,7 @@ action randomize => sub {
             $config->chits([ random_chits($config->map->nr_chits, ensure_all_numbers => 1, best_of => 50) ]);
             $config->randomize_hexes({ keep_sea_border => 1 }, "hex");
             $config->randomize_chits;
+            $config->randomize_ports( allow_crossings => 1 );
             1;
         };
         warn "Unable to produce good distribution: $@\n" if $_ == $N;

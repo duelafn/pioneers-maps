@@ -5,7 +5,7 @@ use MooseX::UndefTolerant;
 use MooseX::StrictConstructor;
 use Method::Signatures::Simple;
 use re 'taint'; use 5.010;
-our $VERSION = 1.0309;# Created: 2013-02-09
+our $VERSION = 3.0011;# Created: 2013-02-09
 use Pioneers::Util qw/ subhash /;
 use Pioneers::Types;
 use Pioneers::Map;
@@ -85,6 +85,7 @@ has map => (
     handles    => {
         randomize_hexes => "randomize_hexes",
         shuffle_ports   => "shuffle_ports",
+        randomize_ports => "randomize_ports",
     },
 );
 
