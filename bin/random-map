@@ -84,7 +84,8 @@ action randomize => sub {
             $config->randomize_ports({ allow_crossings => 1 });
             1;
         };
-        warn "Unable to produce good distribution: $@\n" if $_ == $N;
+        print STDERR "$@";
+        warn "Unable to produce good distribution\n" if $_ == $N;
     }
 
     $config->random_terrain(0);
