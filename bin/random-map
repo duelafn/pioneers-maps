@@ -81,7 +81,7 @@ action randomize => sub {
             $config->chits([ random_chits($config->map->nr_chits, ensure_all_numbers => 1, best_of => 50) ]);
             $config->randomize_hexes({ keep_sea_border => 1 }, "hex");
             $config->randomize_chits;
-            $config->randomize_ports( allow_crossings => 1 );
+            $config->randomize_ports({ allow_crossings => 1 });
             1;
         };
         warn "Unable to produce good distribution: $@\n" if $_ == $N;

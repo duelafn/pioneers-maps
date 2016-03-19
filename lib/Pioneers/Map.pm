@@ -258,6 +258,8 @@ method randomize_ports($opt) {
         $hex->port(shift @_type);
         $hex->port_orientation((shuffle(@ok))[0]);
     }
+
+    warn "Failed to position all ports, some were lost\n" if @_type;
 }
 
 
