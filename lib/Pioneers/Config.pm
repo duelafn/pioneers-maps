@@ -5,7 +5,7 @@ use MooseX::UndefTolerant;
 use MooseX::StrictConstructor;
 use Method::Signatures::Simple;
 use re 'taint'; use 5.010;
-our $VERSION = 3.0011;# Created: 2013-02-09
+our $VERSION = 3.0110;# Created: 2013-02-09
 use Pioneers::Util qw/ subhash /;
 use Pioneers::Types;
 use Pioneers::Map;
@@ -13,6 +13,8 @@ use Pioneers::Config::Parser;
 
 use MooseX::Types::Moose qw/ Str Bool ArrayRef /;
 use MooseX::Types::Common::Numeric qw/ PositiveInt PositiveOrZeroInt /;
+
+use List::Util qw/ sum shuffle /;
 
 =pod
 
@@ -119,83 +121,95 @@ method shuffle_map() {
 
 =head3 randomize_chits
 
-Randomizes the chits of a map while enforcing the rule that no 6's or 8's
-may be adjacent.
+ $map->randomize_chits(\%opt);
 
-NOTE: This method may die if there are no valid randomizations (or if it
-has problems finding one).
+Randomize chits, enforcing various rules. BEWARE: At this time, this method
+will loop forever if there are no valid chit assignments and may loop for a
+long time if it is really hard to find one (though most maps should be
+either possible and fast or completely impossible).
+
+=over 4
+
+=item prevent_adjacent_68
+
+Default true. When set, ensure that no "red" numbers (6's or 8's) are adjacent.
+
+=item enforce_midnums_on_gold
+
+Default true. When set, 6's, 8's, 2,'s and 12's will not be placed on gold mines.
+
+=item allow_gold_adjacent_68
+
+Default true. When false, gold mines will not be permitted adjacent to
+"red" numbers (6'8 or 8's).
+
+=back
 
 =cut
 
 sub randomize_chits {
-    my ($self, $trials, $idx_trials) = @_;
-    $trials     //= 10;
-    $idx_trials //= 10;
-    croak "Unable to randomize chits" unless $trials;
+    state $num_68 = { map +($_ => 1), 6, 8 };
+    state $midnum = { map +($_ => 1), 3..5, 9..11 };
+    state $default_opt = {
+        prevent_adjacent_68     => 1,
+        enforce_midnums_on_gold => 1,
+        allow_gold_adjacent_68  => 1,
+    };
 
-    my $map   = $self->map;
-    my @chits = @{$self->chits};
-    my (@coor, %val);
+    my ($self, $opt) = @_;
+    for (keys %$default_opt) {
+        $$opt{$_} = $$default_opt{$_} unless exists($$opt{$_});
+    }
 
+    my $map = $self->map;
+    my (%chits, %val, @ordered_hex, @hex, %nonred, %nonred_init);
+
+    $chits{$_}++ for @{$self->chits};
     $map->apply(sub {
         my ($hex, $i, $j) = @_;
         return unless $hex->has_prop("consume_chit");
-        $val{"$i,$j"} = shift @chits;
-        push @coor, [$i,$j];
+        push @ordered_hex, [ $i, $j, $hex ];
+        if (!$$opt{allow_gold_adjacent_68} and 'g' eq $hex->type) {
+            $nonred_init{"$$_[0],$$_[1]"}++ for $map->neighbors($i, $j);
+        }
     });
 
+    die "Wrong number of chits, ".(sum(values(%chits)))." != ".(0+@ordered_hex).$/ unless sum(values(%chits)) == @ordered_hex;
 
-    # Basically, we are performing a Fisher-Yates shuffle but rejecting
-    # (and redo-trying) any swaps which would make an invalid map. I'm
-    # pretty sure that this produces a biased shuffle (the probable
-    # legality of certain swaps will depend on the initial conditions of
-    # the chits). However, I expect it will be good enough.
-    my $idx = @coor;
-    my $_idx_trials = $idx_trials;
-  IDX:
-    # Note: Need to enter block when $idx == 0 also so we check for two red
-    #       numbers in upper right corner.
-    while (--$idx >= 0) {
-        my $swp = int rand($idx+1);
-        my ($i, $j) = @{$coor[$idx]};# The coordinates we are fixing
-        my ($a, $b) = @{$coor[$swp]};# Where we are stealing from
+  TRIAL:
+    %nonred = %nonred_init;
+    @hex = shuffle(@ordered_hex);
 
-        # Do not want 2, 12, 6, or 8 on gold mines
-        if ($val{"$a,$b"} =~ /^(?:2|12|6|8)$/) {
-            redo IDX if 'g' eq $map->hex_map->[$i]->[$j]->type and $_idx_trials-- > 0;
-        }
+    # Place difficult numbers first so we don't nedlessly block ourselves out.
+    for my $N (6, 8, 2, 12, 3..5, 9..11) {
+        # Once a hex is rejectsd for $N, there is no point retrying it
+        # untile we are at another $N, so reset $idx outside the next loop.
+        my $idx = 0;
+        for (1..($chits{$N}||0)) {
+            goto TRIAL if $idx >= @hex;# What to do about infinite loop?
+            my ($i, $j, $hex) = @{$hex[$idx]};
 
-        # $i, $j may equal $a, $b or be neighbors or completely separated, however,
-        #   - we are working backwards through the hexes (from bottom right)
-        #   - thus, once the chit at (i,j) is placed, it will not be moved
-        #   - thus, its neighbors below and right of it will never move
+            # Perform various checks to see whether we accept placing
+            # this number on this hex:
+            my $invalid = 0;
+            $invalid++ if $$opt{prevent_adjacent_68}     and $$num_68{$N}  and $nonred{"$i,$j"};
+            $invalid++ if $$opt{enforce_midnums_on_gold} and !$$midnum{$N} and 'g' eq $hex->type;
 
-        # Need only check "forward" hexes if we ourselves are a 6 or 8
-        if ($val{"$a,$b"} =~ /[68]/) {
-            for (qw/ e sw se /) {
-                next unless my ($x, $y) = $map->neighbor($i, $j, $_);
-                if ($val{"$x,$y"} and $val{"$x,$y"} =~ /[68]/) {
-                    # bad swap
-                    if ($_idx_trials-- > 0) {
-                        redo IDX;# try again
-                    } else {
-                        # Tried too many times (most likely got into the
-                        # corner with a bunch of reds left over), start
-                        # over from scratch
-                        return $self->randomize_chits($trials-1, $idx_trials);
-                    }
-                }
+            # If invalid, skip this hex and try the next in the randomization
+            if ($invalid) { $idx++; redo; }
+
+            # Have a valid hex for this number!
+            splice @hex, $idx, 1;# Remove hex, thus we do not increment $idx
+            $val{"$i,$j"} = $N;
+
+            # Mark neighbors if we are 6 ot 8:
+            if ($$opt{prevent_adjacent_68} and $$num_68{$N}) {
+                $nonred{"$$_[0],$$_[1]"}++ for $map->neighbors($i, $j);
             }
         }
-
-        # Success, reset the local trial counter, perform the swap and move on
-        $_idx_trials = $idx_trials;
-        @val{"$i,$j", "$a,$b"} = @val{"$a,$b", "$i,$j"};
     }
 
-    @chits = map $val{"$$_[0],$$_[1]"}, @coor;
-    $self->chits(\@chits);
-
+    $self->chits([ map $val{"$$_[0],$$_[1]"}, @ordered_hex ]);
     return 1;
 }
 
