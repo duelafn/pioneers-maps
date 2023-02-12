@@ -61,7 +61,7 @@ action shuffle => sub {
     my $rv;
     my $trials = $OPT{trials};
     eval { $rv = $config->shuffle_map } while !$rv and $trials-- > 0;
-    die "Unable to shuffle map under current conditions!\n" unless $rv;
+    die "Unable to shuffle map under current conditions!: $@\n" unless $rv;
     for my $hex ($config->map->hexes) {
         $hex->pin($hex->type() =~ /d|g/) if $hex;
     }
