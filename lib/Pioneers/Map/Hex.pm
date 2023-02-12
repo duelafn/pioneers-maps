@@ -28,6 +28,15 @@ Pioneers::Map::Hex - Pioneers Hex object
 
 Hex symbol (p, m, f, h, t, d, g, s)
 
+    p - pasture  (sheep)
+    m - mountain (rock)
+    f - field    (wheat)
+    h - hills    (brick)
+    t - trees    (wood)
+    d - desert
+    g - gold
+    s - sea
+
 =item pin
 
 If true, the land hex will not be randomized even if "randomize terrain" is
