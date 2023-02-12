@@ -98,6 +98,7 @@ has _chit_index => (
 
 method to_map_string() {
     my $str = "map\n";
+    $self->_reset_chit_index;
     for my $row (@{$self->hex_map}) {
         $str .= join ",", map +($_ ? $_->to_map_string($self) : '-'), @$row;
         $str .= "\n";

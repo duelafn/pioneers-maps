@@ -115,7 +115,7 @@ Actions:
 method shuffle_map() {
     $self->shuffle_ports;
     $self->randomize_hexes("land");
-    $self->randomize_chits;
+    return $self->randomize_chits;
 }
 
 
